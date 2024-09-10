@@ -21,7 +21,7 @@ class TicTacToe:
         player2_marker = 'O' if player1_marker == 'X' else 'X'
         self.player2 = ComputerPlayer("Bot", player2_marker)
         print(f'{self.player1}, is you and {self.player2}, is the computer')    
-        self.board = [['Nan' for _ in range(3)] for _ in range(3)]
+        self.board = [['NaN' for _ in range(3)] for _ in range(3)]
         self.current_player = self.player1
 
     # prints the board in the game 
@@ -44,7 +44,10 @@ class TicTacToe:
             self.current_player = self.player1
             
     def is_board_full(self):
-        return 'NaN' not in self.board
+        for row in self.board:
+            if 'NaN' in row:
+                return False 
+        return True 
 
     def check_winner(self):
         # Check rows
@@ -105,27 +108,46 @@ class Player:
 class HumanPlayer(Player):
     def make_move(self,board):
         while True:
-            X = int(input(f"{self.name}, choose you position x 0 - 8: "))
-            Y = int(input(f"{self.name}, choose you position y 0 - 8: "))
-            for row in range(len(board)):
-                for col in range(len(board[0])):
-                    if board[X][Y] == 'NaN':
-                        board[X][Y] = self.marker
-                        break
-                    else:
-                        print("This position is already taken. Choose another.")
+            X = int(input(f"{self.name}, choose you position x 0 - 2: "))
+            Y = int(input(f"{self.name}, choose you position y 0 - 2: "))
+            print('y',Y)
+            print('x',X)
+            print('board[x][y]' ,board[X][Y])
+            if board[X][Y] == 'NaN':
+                board[X][Y] = self.marker
+                break
+            else:
+                print("This position is already taken. Choose another.")
 # player class for computer 
 class ComputerPlayer(Player):
-    def make_move(self,board):
+    def make_move(self, board):
         while True:
-            avaliable = []
+            available = []
+            
+            # Collect all available spots (marked as 'NaN')
             for row in range(len(board)):
                 for col in range(len(board[0])):
                     if board[row][col] == 'NaN':
-                        avaliable.append((row,col))
-            x,y = random.choice(avaliable)
-            board[x][y] = self.marker
-            print(f"{self.name} (computer) chose position {(x,y)}")
+                        available.append((row, col))
+            
+
+            # Ensure there are available positions left
+            if not available:
+                print("No available positions.")
+                break  # Exit if no positions are available
+            
+            # Select a random position from the available list
+            x, y = random.choice(available)
+            print('x:', x)
+            print('y:', y)
+
+            # Double-check that the chosen position is valid
+            if board[x][y] == 'NaN':
+                board[x][y] = self.marker
+                print(f"{self.name} (computer) chose position ({x},{y})")
+                break  # Exit after making the move
+            else:
+                print(f"Error: Position ({x},{y}) is already occupied!")
 
 
 
